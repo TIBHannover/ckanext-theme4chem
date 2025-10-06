@@ -27,6 +27,7 @@
     flex-direction: column;
   }
 
+
   .media-item .module-heading {
     text-align: center;
     margin-bottom: 1rem;
@@ -61,6 +62,42 @@
     color: #333;
     text-decoration: none;
   }
+
+  .media-item .module-heading {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .media-item .module-image img {
+     max-width: 60px;
+    height: auto;
+    display: inline-block;
+    display: inline-block;
+    float: right;         /* push to the right inside the heading */
+    margin-left: 1rem;
+  }
+
+  .media-item .dataset-list {
+    list-style: disc;
+    padding: 1.25rem;
+    margin: 0;
+    text-align: left;
+  }
+
+  .media-item .dataset-list li {
+
+    font-size: 1;
+    margin: 0.25rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .media-item .dataset-list li a {
+    color: #333;
+    text-decoration: none;
+  }
+
 
   .media-item .dataset-list li a:hover {
     text-decoration: underline;
@@ -105,4 +142,8 @@
       </div>
     {% endfor %}
   </div>
+
 </div>
+
+</div>
+

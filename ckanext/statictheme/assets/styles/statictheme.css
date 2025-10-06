@@ -88,6 +88,11 @@ color: black;
   color: rgb(68, 68, 68);
   background-color: white;
 }
+
+.main {
+  min-height: 35px;
+}
+
 /* Change the background color of the "Popular Tags" box. */
 .homepage .module-search .tags {
   background-color: rgb(61, 61, 61);
