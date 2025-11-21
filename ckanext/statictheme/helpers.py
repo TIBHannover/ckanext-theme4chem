@@ -131,8 +131,6 @@ def repositories_dataset_present_count():
     )
 
 
-
-
 def get_measurement_count(name,search_facets):
     """Number of datasets with measurement_technique_proxy field present."""
 
@@ -154,3 +152,44 @@ def get_recent_datasets_by_org():
     result = {org_id: count for org_id, count in query}
 
     return result
+
+def org_last_harvest_time(org_id_or_name):
+    """
+    Return the last finished harvest time (as ISO string or None)
+    for all harvest sources belonging to a given organization.
+    """
+    context = {"ignore_auth": True}
+
+    # 1) Get harvest sources for this org
+    search = toolkit.get_action("package_search")(
+        context,
+        {
+            "fq": "dataset_type:harvest owner_org:{0}".format(org_id_or_name),
+            "rows": 1000,  # adjust if you have more than 1000 sources
+        },
+    )
+
+    last_ts = None
+
+    for pkg in search["results"]:
+        # HarvestSource id == Package id, so we can pass pkg["id"] here
+        src = toolkit.get_action("harvest_source_show")(
+            context,
+            {"id": pkg["id"], "include_status": True}
+        )
+
+        status = src.get("status") or {}
+        last_job = status.get("last_job") or {}
+
+        # Prefer finished time, fall back to created if needed
+        finished = (
+            last_job.get("finished")
+            or last_job.get("gather_finished")
+            or last_job.get("created")
+        )
+
+        if finished and (last_ts is None or finished > last_ts):
+            last_ts = finished
+
+        log.debug(f'Last Time Stamp for Harvesting {last_ts}')
+    return last_ts

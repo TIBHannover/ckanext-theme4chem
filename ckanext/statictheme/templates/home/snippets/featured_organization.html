@@ -120,9 +120,11 @@
                {{ repository.title or repository.name }}
             </a>
           </h3>
-          {% if repository.description %}
-        <p class="media-description" style="font-size: 1rem; color: #333;">
-          {{ h.markdown_extract(repository.description, 180) | urlize }}
+          {% if h.org_last_harvest_time(repository.id) %}
+                {% set time = h.org_last_harvest_time(repository.id).split(' ')[1][:5] %}
+                {% set date = h.org_last_harvest_time(repository.id).split(' ')[0] %}
+        <p class="media-description" style="font-size: 1.4rem; color: #333;">
+           🕒 Last Update &nbsp; {{ time }} {{ date.split('-') | reverse | join('-') }}
         </p>
   {% endif %}
         </header>
@@ -131,8 +133,9 @@
 
           <ul class="dataset-list">
             {% for ds in repository.packages %}
+
               <li>
-               {{ ds.metadata_modified.split('T')[0].split('-') | reverse | join('-') }}&nbsp;&nbsp;&nbsp;<a href="{{ h.url_for(ds.type ~ '.read', id=ds.name) }}">{{ ds.title | truncate(50, True) }}</a>
+               {{ ds.metadata_created.split('T')[0].split('-') | reverse | join('-') }}&nbsp;&nbsp;&nbsp;<a href="{{ h.url_for(ds.type ~ '.read', id=ds.name) }}">{{ ds.title | truncate(50, True) }}</a>
               </li>
             {% endfor %}
           </ul>
