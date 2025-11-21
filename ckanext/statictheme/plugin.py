@@ -71,7 +71,8 @@ class StaticthemePlugin(plugins.SingletonPlugin):
             'get_measurement_count' : helpers.get_measurement_count,
             # 'repositories_present': repositories_present,
             # 'dataset_count':  dataset_count,
-            'get_recent_datasets_by_org': helpers.get_recent_datasets_by_org
+            'get_recent_datasets_by_org': helpers.get_recent_datasets_by_org,
+            "org_last_harvest_time": helpers.org_last_harvest_time,
         }
 
     # IBlueprint
