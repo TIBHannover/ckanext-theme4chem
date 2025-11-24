@@ -124,7 +124,7 @@
                 {% set time = h.org_last_harvest_time(repository.id).split(' ')[1][:5] %}
                 {% set date = h.org_last_harvest_time(repository.id).split(' ')[0] %}
         <p class="media-description" style="font-size: 1.4rem; color: #333;">
-           🕒 Last Update &nbsp; {{ time }} {{ date.split('-') | reverse | join('-') }}
+            Last Update &nbsp; {{ time }} {{ date.split('-') | reverse | join('-') }}
         </p>
   {% endif %}
         </header>
