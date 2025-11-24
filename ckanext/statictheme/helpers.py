@@ -4,11 +4,16 @@ import ckan.plugins as plugins
 import datetime
 from ckan import model
 from sqlalchemy import func
-
+from ckan.model.meta import Session
+from ckan.model.package import Package
+from ckanext.harvest.model import HarvestSource, HarvestJob  # <-- THIS LINE
 from collections import Counter
 import logging
 log = logging.getLogger(__name__)
 
+# --- simple in-memory cache ---
+_LAST_HARVEST_CACHE = {}  # { org_key: {"time": <timestamp>, "value": <iso_or_None>} }
+_CACHE_TTL = 300          # seconds (5 minutes). Adjust as you like.
 
 # def repositories_dataset_present_count():
 #     """Number of repositories in CKAN organizations &
@@ -153,43 +158,74 @@ def get_recent_datasets_by_org():
 
     return result
 
-def org_last_harvest_time(org_id_or_name):
+def _compute_org_last_harvest_time(org_id_or_name):
+
     """
-    Return the last finished harvest time (as ISO string or None)
-    for all harvest sources belonging to a given organization.
+    Return the last harvest time (ISO string or None) for all
+    harvest sources belonging to the given organization.
+
+    Uses a single SQL query:
+      HarvestJob -> HarvestSource -> Package (type='harvest')
+    where Package.owner_org == org_id and Package.id == HarvestSource.id.
     """
+    # Resolve org id, in case a name is passed
     context = {"ignore_auth": True}
 
-    # 1) Get harvest sources for this org
-    search = toolkit.get_action("package_search")(
-        context,
-        {
-            "fq": "dataset_type:harvest owner_org:{0}".format(org_id_or_name),
-            "rows": 1000,  # adjust if you have more than 1000 sources
-        },
+    # Resolve org id (works with id or name)
+    try:
+        org = toolkit.get_action("organization_show")(context, {"id": org_id_or_name})
+    except toolkit.ObjectNotFound:
+        log.warning("Organization %r not found", org_id_or_name)
+        return None
+
+    org_id = org["id"]
+
+    # MAX( COALESCE(finished, gather_finished, created) )
+    # for all jobs of harvest sources whose package belongs to this org
+    last_dt = (
+        Session.query(
+            func.max(
+                func.coalesce(
+                    HarvestJob.finished,
+                    HarvestJob.gather_finished,
+                    HarvestJob.created,
+                )
+            )
+        )
+        .join(HarvestSource, HarvestJob.source_id == HarvestSource.id)
+        .join(Package, Package.id == HarvestSource.id)
+        .filter(Package.type == "harvest")
+        .filter(Package.owner_org == org_id)
+        .scalar()
     )
 
-    last_ts = None
+    if not last_dt:
+        return None
 
-    for pkg in search["results"]:
-        # HarvestSource id == Package id, so we can pass pkg["id"] here
-        src = toolkit.get_action("harvest_source_show")(
-            context,
-            {"id": pkg["id"], "include_status": True}
-        )
+    log.debug(f"{last_dt}")
 
-        status = src.get("status") or {}
-        last_job = status.get("last_job") or {}
+    return last_dt.replace(microsecond=0).strftime("%H:%M %d-%m-%Y")
 
-        # Prefer finished time, fall back to created if needed
-        finished = (
-            last_job.get("finished")
-            or last_job.get("gather_finished")
-            or last_job.get("created")
-        )
 
-        if finished and (last_ts is None or finished > last_ts):
-            last_ts = finished
+def org_last_harvest_time(org_id_or_name):
+    """
+    Cached wrapper around _compute_org_last_harvest_time.
 
-    log.debug(f'last {last_ts}')
-    return last_ts
+    Returns ISO string or None.
+    """
+    now = datetime.datetime.utcnow()
+    key = org_id_or_name
+
+    cached = _LAST_HARVEST_CACHE.get(key)
+    if cached:
+        age = (now - cached["time"]).total_seconds()  # convert timedelta → seconds
+        if age < _CACHE_TTL:
+            return cached["value"]
+
+    value = _compute_org_last_harvest_time(org_id_or_name)
+
+    if value is not None and hasattr(value, "isoformat"):
+        value = value.isoformat()
+
+    _LAST_HARVEST_CACHE[key] = {"time": now, "value": value}
+    return value

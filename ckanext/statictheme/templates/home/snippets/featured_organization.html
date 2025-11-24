@@ -121,11 +121,11 @@
             </a>
           </h3>
           {% if h.org_last_harvest_time(repository.id) %}
-               {# {% set time = h.org_last_harvest_time(repository.id).split(' ')[1][:5] %} #}
-                {# {% set date = h.org_last_harvest_time(repository.id).split(' ')[0] %} #}
+               {# {% set time = h.org_last_harvest_time(repository.id).split('T')[1][:5] %}#}
+               {# {% set date = h.org_last_harvest_time(repository.id).split(' ')[0] %}#}
         <p class="media-description" style="font-size: 1.4rem; color: #333;">
-            {' _(Triggered) '}
-           {# Last Update &nbsp; {{ time }} {{ date.split('-') | reverse | join('-') }} #}
+            <i class="fa fa-clock-o" aria-hidden="true"></i>
+          Last Update &nbsp; {{ h.org_last_harvest_time(repository.id) }}
         </p>
   {% endif %}
         </header>
