@@ -190,4 +190,6 @@ def org_last_harvest_time(org_id_or_name):
 
         if finished and (last_ts is None or finished > last_ts):
             last_ts = finished
+
+    log.debug(f'last {last_ts}')
     return last_ts
