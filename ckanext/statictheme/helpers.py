@@ -11,9 +11,7 @@ from collections import Counter
 import logging
 log = logging.getLogger(__name__)
 
-# --- simple in-memory cache ---
-_LAST_HARVEST_CACHE = {}  # { org_key: {"time": <timestamp>, "value": <iso_or_None>} }
-_CACHE_TTL = 300          # seconds (5 minutes). Adjust as you like.
+
 
 # def repositories_dataset_present_count():
 #     """Number of repositories in CKAN organizations &
@@ -158,6 +156,13 @@ def get_recent_datasets_by_org():
 
     return result
 
+
+# Latest Harvest with Cache Memory
+
+# --- simple in-memory cache ---
+_LAST_HARVEST_CACHE = {}  # { org_key: {"time": <timestamp>, "value": <iso_or_None>} }
+_CACHE_TTL = 300          # seconds (5 minutes). Adjust as you like.
+
 def _compute_org_last_harvest_time(org_id_or_name):
 
     """
@@ -174,11 +179,28 @@ def _compute_org_last_harvest_time(org_id_or_name):
     # Resolve org id (works with id or name)
     try:
         org = toolkit.get_action("organization_show")(context, {"id": org_id_or_name})
+
     except toolkit.ObjectNotFound:
         log.warning("Organization %r not found", org_id_or_name)
         return None
 
     org_id = org["id"]
+    org_title = org.get("title", "")
+
+    # ---------- SPECIAL CASE: MassBank ----------
+    if org_title in ("MassBank", "Massbank-upload"):
+        last_dt = (
+            Session.query(func.max(Package.metadata_created))
+            .filter(Package.owner_org == org_id)
+            .filter(Package.type == "dataset")
+            .scalar()
+        )
+
+        if not last_dt:
+            return None
+
+        # datetime -> "HH:MM DD-MM-YYYY"
+        return last_dt.replace(microsecond=0).strftime("%H:%M %d-%m-%Y")
 
     # MAX( COALESCE(finished, gather_finished, created) )
     # for all jobs of harvest sources whose package belongs to this org
@@ -201,8 +223,6 @@ def _compute_org_last_harvest_time(org_id_or_name):
 
     if not last_dt:
         return None
-
-    log.debug(f"{last_dt}")
 
     return last_dt.replace(microsecond=0).strftime("%H:%M %d-%m-%Y")
 
