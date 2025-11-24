@@ -1,6 +1,78 @@
 {% extends "page.html" %}
 
 
+<style>
+
+    /* 5 cards per row */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding: 15px 0 0 0;
+  margin: 0;
+  background: #fbfbfb url("../../../base/images/bg.png");
+  border: 1px solid #ddd;
+}
+
+/* equal-sized cards */
+.media-item {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  height: 260px;                 /* same height for all cards */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  /* override inline positioning from JS */
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+}
+
+/* fixed logo/image box */
+.media-item .media-image {
+  width: 80px;
+  height: 80px;
+  display: block;
+  margin: 0 auto 10px;
+  object-fit: contain;
+}
+
+/* title */
+.media-heading {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* description with ellipsis (3 lines max) */
+.media-description {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;      /* number of visible lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* dataset count stays just after description */
+.count {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* link near the bottom without changing HTML */
+.media-view {
+  margin-top: auto;           /* pushes link down */
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+</style>
 {% block subtitle %}{{ _('Repositories') }}{% endblock %}
 
 {% block breadcrumb_content %}
