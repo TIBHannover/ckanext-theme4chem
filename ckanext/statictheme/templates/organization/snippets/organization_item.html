@@ -1,0 +1,91 @@
+{% set url = h.url_for(organization.type ~ '.read', id=organization.name) %}
+{% set about_url = '/' ~ organization.type ~ '/about/' ~ organization.name %}
+
+{% block item %}
+<li class="media-item">
+  {# overlay link for full-tile click #}
+  {% block link %}
+  <a href="{{ url }}"
+     title="{{ _('View {organization_name}').format(organization_name=organization.display_name) }}"
+     class="media-view">
+    <span>{{ _('View {organization_name}').format(organization_name=organization.display_name) }}</span>
+  </a>
+  {% endblock %}
+
+  {# real visual content lives above overlay #}
+  <div class="media-inner">
+    {% block item_inner %}
+    {% block image %}
+      <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}"
+         alt="{{ organization.name }}"
+         class="img-responsive media-image">
+
+    {% endblock %}
+
+    {% block title %}
+      <h2 class="media-heading">{{ organization.display_name }}</h2>
+    {% endblock %}
+
+    {% block description %}
+      {% if organization.description %}
+        {% set preview = h.markdown_extract(
+            organization.description,
+            extract_length=80,
+        ) %}
+        <p class="media-description">
+          {{ preview }}
+          {% if organization.description|length > 80 %}
+            <a href="{{ about_url }}"
+            class="read-more-link"
+            title="About {{ organization.display_name }}">[more]</a>
+
+          {% endif %}
+        </p>
+      {% endif %}
+    {% endblock %}
+
+    {% block datasets %}
+      {% if organization.package_count %}
+        <strong class="count">
+          {{ ungettext('{num} Dataset', '{num} Datasets', organization.package_count).format(num=organization.package_count) }}
+        </strong>
+      {% else %}
+        <span class="count">{{ _('0 Datasets') }}</span>
+      {% endif %}
+    {% endblock %}
+
+    {% block capacity %}
+      {% if show_capacity and organization.capacity %}
+        <p><span class="label label-default">
+          {{ h.roles_translated().get(organization.capacity, organization.capacity) }}
+        </span></p>
+      {% endif %}
+    {% endblock %}
+    {% endblock %}
+  </div>
+</li>
+{% endblock %}
+
+{% if position is divisibleby 3 %}
+  <li class="clearfix js-hide"></li>
+{% endif %}
+
+
+<script>
+document.addEventListener('click', function (e) {
+  const item = e.target.closest('.media-item');
+  if (!item) return;
+
+  // If clicking on [more], do nothing
+  if (e.target.closest('.read-more-link')) {
+    return;
+  }
+
+  const link = item.querySelector('.media-view');
+  if (link) {
+    window.location = link.getAttribute('href');
+  }
+});
+
+
+</script>

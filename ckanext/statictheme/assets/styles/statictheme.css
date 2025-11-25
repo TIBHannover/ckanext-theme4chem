@@ -155,11 +155,33 @@ color: black;
   object-fit: contain;     /* show whole logo without distortion */
 }
 
-/* REMOVE these old rules:
-   .media-image { ... }
-   .media-image.img-responsive { ... }  (other than the one above)
-   .media-image img { ... }
-*/
+.media-item {
+  position: relative;
+    cursor: pointer;
+}
+
+/* full tile overlay clickable */
+.media-item .media-view {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  text-indent: -9999px;
+}
+
+/* content sits above clickable layer */
+.media-item .media-inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* ensure [more] beats overlay */
+.media-description .read-more-link {
+  position: relative;
+  z-index: 3;
+  cursor: pointer;
+}
+
+
 
 
 
