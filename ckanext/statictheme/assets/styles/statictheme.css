@@ -136,7 +136,7 @@ color: black;
   width: 23%;              /* adjust if needed */
   margin: 0 1% 20px 0;
   box-sizing: border-box;
-  height: 300px;           /* same height for all tiles */
+  height: 310px;           /* same height for all tiles */
   overflow: hidden;        /* hide extra text */
   background: #fff;
   border: 1px solid #e3e3e3;
