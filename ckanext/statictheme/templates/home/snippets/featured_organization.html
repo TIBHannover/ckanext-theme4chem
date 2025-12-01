@@ -183,6 +183,9 @@
                     Last Update&nbsp; {{ h.org_last_harvest_time(repository.id) }}
                   </div>
                 {% endif %}
+                  <div class="media-description" style="padding-top:20px" >
+                  <strong class="count"> {{ repository.package_count }} Datasets </strong>
+                </div>
               </div>
 
               <div class="fo-logo">
@@ -191,8 +194,11 @@
                           or h.url_for_static('/base/images/placeholder-organization.png') }}"
                   alt="{{ repository.title }}">
               </div>
+
             </div>
+
           </header>
+
         </a>
 
         {% if repository.packages %}
