@@ -42,8 +42,20 @@ height: 80px;
 padding : 30px 0;
 }
 
-.masthead .logo img{
-max-height: 100px;
+.masthead a.logo,
+.masthead a.logo:focus,
+.masthead a.logo:active,
+.masthead a.logo:focus-visible {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.masthead a.logo img {
+  border: none;
+  max-height: 100px;
+  outline: none;
+  box-shadow: none;
 }
 /* The "navigation pills" in the masthead (the links to Datasets,
    Organizations, etc) when the user's pointer hovers over them. */
