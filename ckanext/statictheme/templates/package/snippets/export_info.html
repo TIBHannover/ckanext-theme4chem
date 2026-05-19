@@ -1,15 +1,19 @@
 {% set url = h.url_for('home.index') + pkg.type + '/' %}
 {% set url2 = url + pkg.name %}
 
+
+
     <section class="module module-narrow module-shallow export">
       <h2 class="module-heading"><i class="fa fa-share-square-o"></i> {{_('Export')}}</h2>
       <p class="module-content">
+          <a target="_blank" href="{{ url2 }}.rdf?profiles=euro_dcat_ap">DCAT-AP(rdf/xml)</a>
+          <a target="_blank" href="{{ url2 }}.ttl?profiles=euro_dcat_ap">DCAT-AP(ttl) </a>
+          <a target="_blank" href="{{ url2 }}.jsonld?profiles=euro_dcat_ap">DCAT-AP(jsonld) </a>
+          </p>
 
-        <a target="_blank" href="{{ url2 }}.rdf?profiles=euro_dcat_ap">DCAT-AP(rdf/xml)   </a>
-        <a target="_blank" href="{{ url2 }}.ttl?profiles=euro_dcat_ap">DCAT-AP(ttl) </a>
-        <a target="_blank" href="{{ url2 }}.jsonld?profiles=euro_dcat_ap">DCAT-AP(jsonld) </a>
-        <a target="_blank" href="{{ url2 }}.xml?profiles=dcat_ap_plus">DCAT-AP-PLUS(xml) </a>
-        <a target="_blank" href="{{ url2 }}.ttl?profiles=dcat_ap_plus">DCAT-AP-PLUS(ttl) </a>
+        <p class="module-content">
+          <a target="_blank" href="{{ url2 }}.xml?profiles=dcat_ap_plus">DCAT-AP-PLUS(xml) </a>
+          <a target="_blank" href="{{ url2 }}.ttl?profiles=dcat_ap_plus">DCAT-AP-PLUS(ttl) </a>
           <a target="_blank" href="{{ url2 }}.jsonld?profiles=dcat_ap_plus">DCAT-AP-PLUS(jsonld) </a>
       </p>
 
