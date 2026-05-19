@@ -2,11 +2,15 @@
 
 {% block breadcrumb_content %}
 {% if pkg %}
- {% if pkg.organization %}
-       {% snippet "snippets/package_breadcrumb.html", organization=pkg.organization, pkg=pkg_dict %}
+  {% if pkg.organization %}
+    {% snippet "snippets/package_breadcrumb.html", organization=pkg.organization, pkg=pkg_dict %}
+  {% else %}
+    {% if pkg.type == 'molecule' %}
+      <li>{% link_for _('Molecule'), controller='molecule', action='search' %}</li>
     {% else %}
       <li>{% link_for _('Datasets'), controller='dataset', action='search' %}</li>
     {% endif %}
+  {% endif %}
 {% endif %}
 
 {% endblock %}
