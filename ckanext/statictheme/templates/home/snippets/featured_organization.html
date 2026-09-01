@@ -10,31 +10,28 @@
 }
 
 /* grid of cards */
-.media-grid {
-  display: inherit;     /* inherit from parent */
+.featured-org-wrapper .media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
   align-items: stretch;
-  padding-left: initial;
-
+  padding: 1.5rem;
 }
 
-/* force 2 items per row regardless of parent layout */
-.media-item {
-  width: calc(50% - 1.5rem);
-  min-width: calc(50% - 1.5rem);
-  max-width: calc(50% - 1.5rem);
-
-  /* force equal height for all cards in the same row */
-  display: flex;
-  flex-direction: column;
+.featured-org-wrapper .media-grid::before,
+.featured-org-wrapper .media-grid::after {
+  content: none;
+  display: none;
 }
-
 
 /* one card */
-.media-item {
-  flex: 1 1 calc(50% - 1.5rem); /* 2 per row */
-  min-width: 300px;
-  max-width: 500px;
+.featured-org-wrapper .media-item {
+  float: none;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  height: 100%;
+  margin: 0;
   background: #fff;
   border-radius: 6px;
   padding: 1rem 1.25rem;
@@ -154,9 +151,9 @@
 
 /* responsive: 1 per row on small screens */
 @media (max-width: 768px) {
-  .media-item {
-    flex: 1 1 100%;
-    max-width: 100%;
+  .featured-org-wrapper .media-grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
   }
 }
 </style>

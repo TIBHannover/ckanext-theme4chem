@@ -93,11 +93,16 @@ color: black;
   min-height: 35px;
 }
 
-/* Give CKAN's shared primary/secondary page layout more room on desktops. */
+/* Keep CKAN's top-level site sections aligned on wider desktop screens. */
 @media (min-width: 1200px) {
-  .main > #content.container {
+  .account-masthead > .container,
+  .masthead > .container,
+  .main > #content.container,
+  .homepage > #content.container,
+  .homepage .main > .container,
+  .site-footer > .container {
     width: calc(100% - 30px);
-    max-width: 1320px;
+    max-width: 1420px;
   }
 }
 
