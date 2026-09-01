@@ -82,6 +82,60 @@ color: black;
     background-color: rgb(0,156,188);
 }
 
+/* Keep the navigation collapsed at tablet widths and let it expand the
+   header instead of overlapping the page content. */
+@media (max-width: 1199px) {
+  .masthead {
+    height: auto;
+    min-height: 120px;
+  }
+
+  .masthead > .container {
+    height: auto;
+    min-height: 80px;
+  }
+
+  .masthead .navbar-toggle {
+    display: block;
+    margin-top: 30px;
+  }
+
+  .masthead .navbar-collapse,
+  .masthead .navbar-collapse.collapsing {
+    clear: both;
+    float: none;
+    width: 100%;
+    margin: 0;
+    padding: 10px 0 15px;
+    overflow: hidden;
+  }
+
+  .masthead .navbar-collapse.collapse {
+    display: none !important;
+  }
+
+  .masthead .navbar-collapse.collapse.in {
+    display: block !important;
+    height: auto !important;
+    overflow: visible;
+  }
+
+  .masthead .section,
+  .masthead .navigation.section,
+  .masthead .navigation .nav-pills > li {
+    float: none;
+  }
+
+  .masthead .navigation .nav-pills > li > a {
+    display: block;
+    padding: 10px 15px;
+  }
+
+  .masthead .navbar-collapse > .btn {
+    margin: 10px 15px 0;
+  }
+}
+
 /* ===========================================
    The content in the middle of the front page
    =========================================== */
@@ -105,16 +159,32 @@ color: black;
   min-height: 35px;
 }
 
-/* Keep CKAN's top-level site sections aligned on wider desktop screens. */
-@media (min-width: 1200px) {
-  .account-masthead > .container,
-  .masthead > .container,
-  .main > #content.container,
-  .homepage > #content.container,
-  .homepage .main > .container,
-  .site-footer > .container {
-    width: calc(100% - 30px);
-    max-width: 1420px;
+/* Full-width site container with consistent, responsive page gutters.
+   The explicit CKAN selectors cover wrappers inherited from core templates. */
+.container-wide,
+.account-masthead > .container,
+.masthead > .container,
+.main > #content.container,
+.homepage > #content.container,
+.homepage .main > .container,
+.site-footer > .container {
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: clamp(1rem, 5vw, 8rem);
+  padding-right: clamp(1rem, 5vw, 8rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Give long facet labels and their count badges slightly more room. */
+@media (min-width: 768px) {
+  .main .wrapper:not(.no-nav)::before,
+  .main .wrapper:not(.no-nav) > .secondary {
+    width: 27%;
+  }
+
+  .main .wrapper:not(.no-nav) > .primary {
+    width: 73%;
   }
 }
 
